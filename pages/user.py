@@ -48,6 +48,7 @@ def show_ideas_page():
     with col2:
         if st.button('提交想法', key='submit_button', help='提交您的想法', use_container_width=True):
             timestamp = datetime.now(shanghai_tz)
+            print(timestamp)
             new_idea = Idea(timestamp=timestamp, title=title, description=description,
                             employee_id=employee_id, status='待处理', remark='')
 

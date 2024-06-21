@@ -5,13 +5,13 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 import base64
 import pytz
 
+# 上海时区
 shanghai_tz = pytz.timezone('Asia/Shanghai')
 
 # 解码函数
 def decrypt_employee_id(encrypted_id):
     decrypted_id = base64.b64decode(encrypted_id.encode()).decode()
     return decrypted_id
-
 
 # 数据库连接字符串
 DATABASE_URI = 'postgresql://idea_owner:K7et2ERyJBqk@ep-tight-paper-a1dw4ef8.ap-southeast-1.aws.neon.tech/idea?sslmode=require'
@@ -25,7 +25,7 @@ Base = declarative_base()
 class Idea(Base):
     __tablename__ = 'ideas'
     id = Column(Integer, primary_key=True)
-    timestamp = Column(DateTime, default=datetime.now)
+    timestamp = Column(String)  # 修改为字符串类型
     title = Column(String)
     description = Column(String)
     employee_id = Column(String)
@@ -47,7 +47,8 @@ def show_ideas_page():
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         if st.button('提交想法', key='submit_button', help='提交您的想法', use_container_width=True):
-            timestamp = datetime.now(shanghai_tz)
+            # 获取当前时间并转换为字符串格式
+            timestamp = datetime.now(shanghai_tz).strftime('%Y-%m-%d %H:%M:%S')
             print(timestamp)
             new_idea = Idea(timestamp=timestamp, title=title, description=description,
                             employee_id=employee_id, status='待处理', remark='')
@@ -68,13 +69,11 @@ def show_ideas_page():
         st.markdown("<h3></h3>", unsafe_allow_html=True)
 
         for idea in submitted_ideas:
-            formatted_timestamp = idea.timestamp.strftime('%Y-%m-%d %H:%M:%S')  # 格式化时间戳
-
             st.write(f"### {idea.title}")
             st.markdown(f"**描述:** {idea.description}")
             st.write(f"**状态:** {idea.status}")
             st.write(f"**备注:** {idea.remark}")
-            st.write(f"**时间:** {formatted_timestamp}")
+            st.write(f"**时间:** {idea.timestamp}")
             st.write("---")
 
     else:

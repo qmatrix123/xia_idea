@@ -3,6 +3,9 @@ from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 import base64
+import pytz
+
+shanghai_tz = pytz.timezone('Asia/Shanghai')
 
 # 解码函数
 def decrypt_employee_id(encrypted_id):
@@ -44,7 +47,7 @@ def show_ideas_page():
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         if st.button('提交想法', key='submit_button', help='提交您的想法', use_container_width=True):
-            timestamp = datetime.now()
+            timestamp = datetime.now(shanghai_tz)
             new_idea = Idea(timestamp=timestamp, title=title, description=description,
                             employee_id=employee_id, status='待处理', remark='')
 
